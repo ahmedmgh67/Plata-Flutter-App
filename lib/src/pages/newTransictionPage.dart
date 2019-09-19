@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:success_error_overlay/success_error_overlay.dart';
 import 'package:clipboard_manager/clipboard_manager.dart';

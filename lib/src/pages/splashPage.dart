@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import './signinPage.dart';
 import 'dashboardPage.dart';
 import './landingPage.dart';
@@ -18,20 +17,21 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return SplashScreen(
-      gradientBackground: LinearGradient(
-        stops: [
-          0.0,0.0001,0.1,0.9,1
-        ],
-        colors: [
-          Colors.purple,
-          Colors.purpleAccent,
-          Colors.deepPurpleAccent,
-          Colors.deepPurple,
-          Colors.purple,
-        ]
-      ),
-      image: Image.network("https://d3r4tb575cotg3.cloudfront.net/static/typoper.png"),
-      seconds: 3,
+      // gradientBackground: LinearGradient(
+      //   stops: [
+      //     0.0,0.0001,0.1,0.9,1
+      //   ],
+      //   colors: [
+      //     Colors.purple,
+      //     Colors.purpleAccent,
+      //     Colors.deepPurpleAccent,
+      //     Colors.deepPurple,
+      //     Colors.purple,
+      //   ]
+      // ),
+      backgroundColor: Colors.lightBlue[200],
+      image: Image.asset("media/typoper.png"),
+      seconds: 3000000,
       navigateAfterSeconds: widget.user != null ? DashboardPage(widget.user) : LandingPage(),
       loaderColor: Colors.white,
     );

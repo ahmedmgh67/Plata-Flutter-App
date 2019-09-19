@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clipboard_manager/clipboard_manager.dart';
-import './showQRPage.dart';
 
 class TransictionsPage extends StatefulWidget {
   final data;
@@ -16,9 +12,7 @@ class _TransictionsPageState extends State<TransictionsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //request();
   }
   var data;
   final key = new GlobalKey<ScaffoldState>();

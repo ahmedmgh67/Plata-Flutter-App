@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:local_auth/auth_strings.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -15,7 +13,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool loaded = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     init();
   }

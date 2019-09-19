@@ -8,7 +8,6 @@ import './newTransictionPage.dart';
 import './transictionsPage.dart';
 import './withdrawPage.dart';
 import './settingsPage.dart';
-import './depositPage.dart';
 import './qrPage.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -280,36 +279,44 @@ class _DashboardPageState extends State<DashboardPage> {
                 //             builder: (context) => DepositPage(),
                 //           ),
                 //         )),
-                // _buildTile(
-                //     Padding(
-                //       padding: const EdgeInsets.all(24.0),
-                //       child: Column(
-                //           mainAxisAlignment: MainAxisAlignment.start,
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: <Widget>[
-                //             Material(
-                //                 color: Colors.teal,
-                //                 shape: CircleBorder(),
-                //                 child: Padding(
-                //                   padding: const EdgeInsets.all(16.0),
-                //                   child: Icon(Icons.settings_applications,
-                //                       color: Colors.white, size: 30.0),
-                //                 )),
-                //             Padding(padding: EdgeInsets.only(bottom: 16.0),),
-                //             Text('QR code',
-                //                 style: TextStyle(
-                //                     color: Colors.black,
-                //                     fontWeight: FontWeight.w700,
-                //                     fontSize: 21.0),),
-                //             Text('scan QR code',
-                //                 style: TextStyle(color: Colors.black45),),
-                //           ],),
-                //     ),
-                //     onTap: () => Navigator.of(context).push(
-                //           MaterialPageRoute(
-                //             builder: (context) => QRPage(),
-                //           ),
-                //         ),),
+                _buildTile(
+                  Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Material(
+                            color: Colors.teal,
+                            shape: CircleBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Icon(Icons.settings_applications,
+                                  color: Colors.white, size: 30.0),
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                        ),
+                        Text(
+                          'QR code',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 21.0),
+                        ),
+                        Text(
+                          'scan QR code',
+                          style: TextStyle(color: Colors.black45),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => QRPage(widget.email),
+                    ),
+                  ),
+                ),
                 _buildTile(
                   Padding(
                     padding: const EdgeInsets.all(24.0),
@@ -391,9 +398,10 @@ class _DashboardPageState extends State<DashboardPage> {
       LocalAuthentication localAuthentication = LocalAuthentication();
 
       var authed = await localAuthentication.authenticateWithBiometrics(
-          localizedReason: "To open the app",
-          useErrorDialogs: true,
-          stickyAuth: true);
+        localizedReason: "To open the app",
+        useErrorDialogs: true,
+        stickyAuth: true,
+      );
       if (authed) {
       } else {}
     }
@@ -408,6 +416,8 @@ class _DashboardPageState extends State<DashboardPage> {
       "https://plataapi.tk/api/account/${widget.email}",
     );
     var decoded2 = jsonDecode(req2.body);
+    prefs.setString("userId", decoded2["_id"]);
+    prefs.setString("userAm", decoded2["balance"]);
     balance = decoded2["balance"];
     name = decoded2["name"];
     print(decoded2);
