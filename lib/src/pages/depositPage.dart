@@ -106,7 +106,7 @@ class _DepositPageState extends State<DepositPage> {
 
   void submit() async {
     var prefs = await SharedPreferences.getInstance();
-    var user = prefs.getString("email");
+    var user = prefs.getString("phone");
     var req = await http.post(
       "https://plataapi.tk/api/payments",
       body: {

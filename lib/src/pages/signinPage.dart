@@ -11,7 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String email;
+  String phone;
   String password;
   bool showed = false;
   bool isCorrect;
@@ -51,10 +51,10 @@ class _LoginPageState extends State<LoginPage> {
                   margin: EdgeInsets.only(bottom: 9.0),
                   child: TextField(
                       decoration: InputDecoration(
-                        labelText: "E-Mail",
+                        labelText: "Phone",
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (s) => email = s),
+                      onChanged: (s) => phone = s),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 9.0),
@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     if (isCorrect) {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => DashboardPage(email)));
+                          builder: (_) => DashboardPage(phone)));
                     } else {
                       setState(() => showed = false);
                     }
@@ -100,12 +100,12 @@ class _LoginPageState extends State<LoginPage> {
       var req = await http.post(
         "https://plataapi.tk/api/login",
         body: {
-          "email": email,
+          "phone": phone,
           "password": password,
         },
       );
       var decoded = jsonDecode(req.body);
-      if (decoded["email"] != email && decoded["password"] != password) {
+      if (decoded["phone"] != phone && decoded["password"] != password) {
         isCorrect = false;
         //html.window.alert("error IN MATCHINg");
         setState(() {
@@ -118,9 +118,10 @@ class _LoginPageState extends State<LoginPage> {
           showed = true;
         });
         var prefs = await SharedPreferences.getInstance();
-        prefs.setString("email", email);
+        // prefs.setString("email", email);
+        prefs.setString("phone", phone);
         await Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => DashboardPage(email)));
+            MaterialPageRoute(builder: (_) => DashboardPage(phone)));
         return 0;
       }
     } catch (err) {

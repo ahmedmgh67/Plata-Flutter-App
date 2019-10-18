@@ -7,8 +7,8 @@ import './errorPage.dart';
 import '../utils/success_error_overlay.dart';
 
 class ChargeOnePage extends StatefulWidget {
-  final emailsc;
-  ChargeOnePage(this.emailsc);
+  final phonesc;
+  ChargeOnePage(this.phonesc);
   @override
   _ChargeOnePageState createState() => _ChargeOnePageState();
 }
@@ -34,7 +34,7 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
         child: loaded == false
             ? CircularProgressIndicator()
             : Stack(
-              fit: StackFit.expand,
+                fit: StackFit.expand,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 80.0),
@@ -59,7 +59,14 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
                       ],
                     ),
                   ),
-
+                  SuccessErrorOverlay(
+                    isCorrect: isCorrect,
+                    onTap: (){
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  )
                 ],
               ),
       ),
@@ -67,29 +74,75 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
   }
 
   void request() async {
-    var email = widget.emailsc;
-    print(email + "this should be email");
-    var req = await http.get("https://plata-eg.ml/api/account/" + email);
-    var decoded = jsonDecode(req.body);
-    if (decoded != null) {
-      id = decoded["_id"];
-      print(" $decoded decoded");
-      setState(() {
-        loaded = true;
-      });
+    var phone = widget.phonesc;
+    var substringList = phone.split("::");
+    if (substringList[0] == "b") {
+      var billAmount = substringList[2];
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Confirm"),
+                  onPressed: () => confirmBusinessPayment(billAmount, substringList[1]),
+                ),
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+              title: Text("Confirm"),
+              content: Text("Confirm paying $billAmount"),
+            );
+          });
     } else {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => ErrorPage()));
+      print(phone + "this should be phone");
+      var req = await http.get("https://plata-eg.ml/api/account/" + phone);
+      var decoded = jsonDecode(req.body);
+      if (decoded != null) {
+        id = decoded["_id"];
+        print(" $decoded decoded");
+        setState(() {
+          loaded = true;
+        });
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => ErrorPage()));
+      }
     }
   }
 
-  void submit() async {
+  void confirmBusinessPayment(bill, phone) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String myEmail = prefs.getString("email");
-    var req = await http.get(
-        "https://plata-eg.ml/api/qrcode/$myEmail/${widget.emailsc}/$amount");
+    var myPhone  = prefs.getString("phone");
+    var req = await http.get("https://plataapi.tk/api/qrcode/$myPhone/$phone/$bill");
     var decoded = jsonDecode(req.body);
-    if (decoded["message"] == "amount is less than balance"){
+    if (decoded["message"] == "amount is less than balance") {
+      isCorrect = false;
+      setState(() {
+        showed = true;
+      });
+    } else {
+      isCorrect = true;
+      setState(() {
+        showed = true;
+      });
+    }
+  }
+  void submit() async {
+    var phone = widget.phonesc;
+    var substringList = phone.split("::");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String myphone = prefs.getString("phone");
+    var req = await http.get(
+        "https://plata-eg.ml/api/qrcode/$myphone/${substringList[1]}/$amount");
+    var decoded = jsonDecode(req.body);
+    if (decoded["message"] == "amount is less than balance") {
       isCorrect = false;
       setState(() {
         showed = true;

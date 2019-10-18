@@ -29,11 +29,11 @@ class _SplashPageState extends State<SplashPage> {
       //     Colors.purple,
       //   ]
       // ),
-      backgroundColor: Colors.lightBlue[200],
+      backgroundColor: Colors.white,
       image: Image.asset("media/typoper.png"),
-      seconds: 3000000,
+      seconds: 3,
       navigateAfterSeconds: widget.user != null ? DashboardPage(widget.user) : LandingPage(),
-      loaderColor: Colors.white,
+      loaderColor: Colors.deepPurple,
     );
   }
   

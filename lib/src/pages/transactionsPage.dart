@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:clipboard_manager/clipboard_manager.dart';
 
-class TransictionsPage extends StatefulWidget {
+class TransactionPage extends StatefulWidget {
   final data;
-  TransictionsPage(this.data);
+  TransactionPage(this.data);
   @override
-  _TransictionsPageState createState() => _TransictionsPageState();
+  _TransactionPageState createState() => _TransactionPageState();
 }
 
-class _TransictionsPageState extends State<TransictionsPage> {
+class _TransactionPageState extends State<TransactionPage> {
 
   @override
   void initState() {

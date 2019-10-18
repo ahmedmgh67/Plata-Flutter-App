@@ -6,12 +6,12 @@ void main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   
-  runApp(new MyApp(prefs.getString("email")));
+  runApp(new MyApp(prefs.getString("phone")));
 }
 
 class MyApp extends StatefulWidget {
-  final String email;
-  MyApp(this.email);
+  final String phone;
+  MyApp(this.phone);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: SplashPage(widget.email),
+      home: SplashPage(widget.phone),
     );
   }
 }

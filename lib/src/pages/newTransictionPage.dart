@@ -102,9 +102,9 @@ class _NewTransictionPageState extends State<NewTransictionPage> {
 
   void submit() async {
     var prefs = await SharedPreferences.getInstance();
-    var user = prefs.getString("email");
+    var user = prefs.getString("phone");
     var req = await Dio().post(
-      "https://plataapi.tk/api/transictions",
+      "https://plataapi.tk/api/transaction",
       data: {
         "user": user,
         "amount": amount,

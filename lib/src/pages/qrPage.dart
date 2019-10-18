@@ -6,8 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './chargePage.dart';
 
 class QRPage extends StatefulWidget {
-  final String email;
-  QRPage(this.email);
+  final String phone;
+  QRPage(this.phone);
   @override
   _QRPageState createState() => _QRPageState();
 }
@@ -41,7 +41,7 @@ class _QRPageState extends State<QRPage> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           child: QrImage(
-            data: widget.email//prefs.getString("email"),
+            data: widget.phone//prefs.getString("phone"),
           ),
         ),
       ),

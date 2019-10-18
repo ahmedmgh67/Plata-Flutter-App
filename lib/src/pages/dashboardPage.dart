@@ -4,15 +4,15 @@ import 'dart:convert';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_auth/local_auth.dart';
-import './newTransictionPage.dart';
-import './transictionsPage.dart';
+import './transactionsPage.dart';
 import './withdrawPage.dart';
 import './settingsPage.dart';
 import './qrPage.dart';
+import './sendMoneyPage.dart';
 
 class DashboardPage extends StatefulWidget {
-  final String email;
-  DashboardPage(this.email);
+  final String phone;
+  DashboardPage(this.phone);
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -30,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
   var balance;
   var name;
   int trn;
-  var transictionsjson;
+  var transactionjson;
   Widget smallScreen() {
     return Scaffold(
       appBar: AppBar(
@@ -44,14 +44,14 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => NewTransictionPage())),
-        child: Icon(
-          Icons.add,
-          size: 31.0,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => Navigator.of(context)
+      //       .push(MaterialPageRoute(builder: (_) => NewTransictionPage())),
+      //   child: Icon(
+      //     Icons.add,
+      //     size: 31.0,
+      //   ),
+      // ),
       drawer: Drawer(
         child: !loaded
             ? Center(
@@ -61,16 +61,21 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: ListView(
                   children: <Widget>[
                     UserAccountsDrawerHeader(
-                      accountEmail: Text(widget.email),
+                      accountEmail: Text(widget.phone),
                       accountName: Text(name),
                       decoration: BoxDecoration(color: Colors.deepPurple),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Colors.purple,
+                        child:
+                            Text(name.toString().substring(0, 1).toUpperCase(), style: TextStyle(fontSize: 39.0),),
+                      ),
                     ),
                     ListTile(
                         title: Text("Transactions"),
                         onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (_) =>
-                                    TransictionsPage(transictionsjson)))),
+                                    TransactionPage(transactionjson)))),
                     ListTile(
                         title: Text("Withdraw"),
                         onTap: () => Navigator.of(context).push(
@@ -138,7 +143,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text('Transictions Made',
+                              Text('transaction Made',
                                   style: TextStyle(color: Colors.blueAccent)),
                               Text(trn.toString(),
                                   style: TextStyle(
@@ -203,52 +208,52 @@ class _DashboardPageState extends State<DashboardPage> {
                                 shape: CircleBorder(),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Icon(Icons.settings_applications,
+                                  child: Icon(Icons.widgets,
                                       color: Colors.white, size: 30.0),
                                 )),
                             Padding(padding: EdgeInsets.only(bottom: 16.0)),
-                            Text('Transictions',
+                            Text('transaction',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 21.0)),
-                            Text('See All transictions',
+                            Text('See All transaction',
                                 style: TextStyle(color: Colors.black45)),
                           ]),
                     ),
                     onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                TransictionsPage(transictionsjson),
+                                TransactionPage(transactionjson),
                           ),
                         )),
-                _buildTile(
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Material(
-                                color: Colors.amber,
-                                shape: CircleBorder(),
-                                child: Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Icon(Icons.attach_money,
-                                      color: Colors.white, size: 30.0),
-                                )),
-                            Padding(padding: EdgeInsets.only(bottom: 16.0)),
-                            Text('Withdraw',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 24.0)),
-                            Text('See All Alerts',
-                                style: TextStyle(color: Colors.black45)),
-                          ]),
-                    ),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => WithdrawPage(balance)))),
+                // _buildTile(
+                //     Padding(
+                //       padding: const EdgeInsets.all(24.0),
+                //       child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.start,
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: <Widget>[
+                //             Material(
+                //                 color: Colors.amber,
+                //                 shape: CircleBorder(),
+                //                 child: Padding(
+                //                   padding: EdgeInsets.all(16.0),
+                //                   child: Icon(Icons.attach_money,
+                //                       color: Colors.white, size: 30.0),
+                //                 )),
+                //             Padding(padding: EdgeInsets.only(bottom: 16.0)),
+                //             Text('Withdraw',
+                //                 style: TextStyle(
+                //                     color: Colors.black,
+                //                     fontWeight: FontWeight.w700,
+                //                     fontSize: 24.0)),
+                //             Text('See All Alerts',
+                //                 style: TextStyle(color: Colors.black45)),
+                //           ]),
+                //     ),
+                //     onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                //         builder: (context) => WithdrawPage(balance)))),
                 // _buildTile(
                 //     Padding(
                 //       padding: const EdgeInsets.all(24.0),
@@ -287,25 +292,25 @@ class _DashboardPageState extends State<DashboardPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Material(
-                            color: Colors.teal,
+                            color: Colors.purple,
                             shape: CircleBorder(),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: Icon(Icons.settings_applications,
+                              child: Icon(Icons.bubble_chart,
                                   color: Colors.white, size: 30.0),
                             )),
                         Padding(
                           padding: EdgeInsets.only(bottom: 16.0),
                         ),
                         Text(
-                          'QR code',
+                          'Pay ',
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w700,
                               fontSize: 21.0),
                         ),
                         Text(
-                          'scan QR code',
+                          'Pay and Receive',
                           style: TextStyle(color: Colors.black45),
                         ),
                       ],
@@ -313,7 +318,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => QRPage(widget.email),
+                      builder: (context) => QRPage("p::" + widget.phone),
                     ),
                   ),
                 ),
@@ -325,7 +330,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Material(
-                              color: Colors.teal,
+                              color: Colors.grey,
                               shape: CircleBorder(),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -336,21 +341,21 @@ class _DashboardPageState extends State<DashboardPage> {
                             padding: EdgeInsets.only(bottom: 16.0),
                           ),
                           Text(
-                            'Settings',
+                            'Send Money',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 21.0),
                           ),
                           Text(
-                            'Set Settings',
+                            'Send money by phone',
                             style: TextStyle(color: Colors.black45),
                           ),
                         ]),
                   ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => SettingsPage(),
+                      builder: (context) => SendMoneyPage(),
                     ),
                   ),
                 ),
@@ -362,8 +367,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 StaggeredTile.extent(1, 180.0),
                 StaggeredTile.extent(1, 180.0),
                 StaggeredTile.extent(1, 180.0),
-                StaggeredTile.extent(1, 180.0),
-                StaggeredTile.extent(1, 180.0),
+                //StaggeredTile.extent(1, 180.0),
+                //StaggeredTile.extent(1, 180.0),
               ],
             ),
     );
@@ -406,14 +411,14 @@ class _DashboardPageState extends State<DashboardPage> {
       } else {}
     }
     var req = await http.get(
-      "https://plataapi.tk/api/transictions/${widget.email}",
+      "https://plataapi.tk/api/transaction/${widget.phone}",
     );
     var decoded = jsonDecode(req.body);
-    transictionsjson = decoded;
+    transactionjson = decoded;
     print(decoded);
     trn = decoded.length;
     var req2 = await http.get(
-      "https://plataapi.tk/api/account/${widget.email}",
+      "https://plataapi.tk/api/account/${widget.phone}",
     );
     var decoded2 = jsonDecode(req2.body);
     prefs.setString("userId", decoded2["_id"]);

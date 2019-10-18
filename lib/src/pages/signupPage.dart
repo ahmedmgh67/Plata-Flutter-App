@@ -10,7 +10,6 @@ class GetStartedPage extends StatefulWidget {
 
 class _GetStartedPageState extends State<GetStartedPage> {
   String name;
-  String email;
   String phone;
   String password;
   bool showed = false;
@@ -56,15 +55,15 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       ),
                       onChanged: (s) => name = s),
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 9.0),
-                  child: TextField(
-                      decoration: InputDecoration(
-                        labelText: "E-Mail",
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (s) => email = s),
-                ),
+                // Container(
+                //   margin: EdgeInsets.only(bottom: 9.0),
+                //   child: TextField(
+                //       decoration: InputDecoration(
+                //         labelText: "E-Mail",
+                //         border: OutlineInputBorder(),
+                //       ),
+                //       onChanged: (s) => email = s),
+                // ),
                 Container(
                   margin: EdgeInsets.only(bottom: 9.0),
                   child: TextField(
@@ -102,7 +101,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                   onTap: () {
                     if (isCorrect) {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => DashboardPage(email)));
+                          builder: (_) => DashboardPage(phone)));
                     } else {
                       setState(() => showed = false);
                     }
@@ -118,7 +117,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
       await post(
         "https://plata-eg.ml/api/register",
         body: {
-          "email": email,
+          // "email": email,
           "password": password,
           "name": name,
           "phone": phone
