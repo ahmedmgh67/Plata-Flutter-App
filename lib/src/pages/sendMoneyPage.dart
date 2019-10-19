@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:contact_picker/contact_picker.dart';
 import '../utils/success_error_overlay.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SendMoneyPage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class SendMoneyPage extends StatefulWidget {
 
 class _SendMoneyPageState extends State<SendMoneyPage> {
   final ContactPicker _contactPicker = new ContactPicker();
-  Contact _contact;
+  Contact acontact;
   TextEditingController cont = TextEditingController();
   final key = new GlobalKey<ScaffoldState>();
   var showed = false;
@@ -38,7 +39,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                       icon: Icon(Icons.account_circle),
                       onPressed: () async {
                         Contact contact = await _contactPicker.selectContact();
-                        _contact = contact;
+                        acontact = contact;
                         cont.clear();
                         setState(() {
                           cont.text = contact.phoneNumber.number;
@@ -96,6 +97,13 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   void submit() async {
     if (amount == null || cont.text == null || cont.text.length != 11) {
       key.currentState.showSnackBar(SnackBar(content: Text("Enter correct info")));
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var phone = prefs.getString("phone");
+      await http.get("https://plataapi.tk/api/qrcode/$phone/${acontact.phoneNumber.number.toString()}/$amount");
+      setState(() {
+        showed = true;
+      });
     }
   }
 }
