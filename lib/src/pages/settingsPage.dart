@@ -91,5 +91,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void logout() async {
     prefs.clear();
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
 }

@@ -334,7 +334,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               shape: CircleBorder(),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
-                                child: Icon(Icons.settings_applications,
+                                child: Icon(Icons.send,
                                     color: Colors.white, size: 30.0),
                               )),
                           Padding(
@@ -348,7 +348,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 fontSize: 21.0),
                           ),
                           Text(
-                            'Send money by phone',
+                            'Send money',
                             style: TextStyle(color: Colors.black45),
                           ),
                         ]),
@@ -411,7 +411,7 @@ class _DashboardPageState extends State<DashboardPage> {
       } else {}
     }
     var req = await http.get(
-      "https://plataapi.tk/api/transaction/${widget.phone}",
+      "https://plataapi.tk/api/transactions/${widget.phone}",
     );
     var decoded = jsonDecode(req.body);
     transactionjson = decoded;

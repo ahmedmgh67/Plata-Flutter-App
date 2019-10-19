@@ -3,10 +3,10 @@ import './src/pages/splashPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-
+  WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   
-  runApp(new MyApp(prefs.getString("phone")));
+  runApp(MyApp(prefs.getString("phone")));
 }
 
 class MyApp extends StatefulWidget {
@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-	  debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(),
       title: 'Plata',
       theme: ThemeData(

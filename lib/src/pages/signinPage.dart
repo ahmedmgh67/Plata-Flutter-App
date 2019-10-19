@@ -15,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   String password;
   bool showed = false;
   bool isCorrect;
+  final key = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +35,7 @@ class _LoginPageState extends State<LoginPage> {
               //mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 2),
-                Image.asset(
-                    "media/typoper.png"),
+                Image.asset("media/typoper.png"),
                 SizedBox(height: 10),
                 Text("Welcome Back to Plata",
                     textAlign: TextAlign.center,
@@ -96,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   dynamic login() async {
+    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
     try {
       var req = await http.post(
         "https://plataapi.tk/api/login",

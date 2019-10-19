@@ -14,6 +14,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   String password;
   bool showed = false;
   bool isCorrect;
+  final key = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +23,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
         children: <Widget>[
           Opacity(
             opacity: 0.4,
-            child: Image.network(
+            child: Image.asset(
               "media/landing.jpg",
               fit: BoxFit.fill,
             ),
@@ -33,8 +34,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
               //mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 2),
-                Image.network(
-                    "media/typoper.png"),
+                Image.asset("media/typoper.png"),
                 SizedBox(height: 10),
                 Text("Welcome to Plata",
                     textAlign: TextAlign.center,
@@ -100,8 +100,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                   isCorrect: isCorrect,
                   onTap: () {
                     if (isCorrect) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => DashboardPage(phone)));
+                      Navigator.of(context).pop();
                     } else {
                       setState(() => showed = false);
                     }
@@ -113,6 +112,8 @@ class _GetStartedPageState extends State<GetStartedPage> {
   }
 
   Future<int> signup(a) async {
+    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
+
     try {
       await post(
         "https://plata-eg.ml/api/register",
@@ -133,6 +134,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
       });
       return 1;
     }
+    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
     isCorrect = true;
     setState(() {
       showed = true;

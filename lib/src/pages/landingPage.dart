@@ -11,8 +11,8 @@ class LandingPage extends StatelessWidget {
         children: <Widget>[
           Opacity(
             opacity: 0.4,
-            child: Image.network(
-              "https://images.pexels.com/photos/128367/pexels-photo-128367.png?cs=srgb&dl=architecture-buildings-city-128367.jpg&fm=jpg",
+            child: Image.asset(
+              "media/landing.jpg",
               fit: BoxFit.fill,
             ),
           ),
@@ -22,8 +22,8 @@ class LandingPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 70),
-                Image.network(
-                    "https://d3r4tb575cotg3.cloudfront.net/static/typoper.png"),
+                Image.asset(
+                    "media/typoper.png"),
                 SizedBox(height: 90),
                 Text("Welcome to Plata",
                     textAlign: TextAlign.center,
@@ -46,7 +46,7 @@ class LandingPage extends StatelessWidget {
                 ),
                 RaisedButton(
                   child: Text(
-                    "    Log In    ",
+                    "Log In",
                     style: TextStyle(color: Colors.white),
                   ),
                   color: Colors.deepPurple,
