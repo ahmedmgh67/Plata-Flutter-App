@@ -93,6 +93,6 @@ class _SettingsPageState extends State<SettingsPage> {
     prefs.clear();
     Navigator.of(context).pop();
     Navigator.of(context).pop();
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
   }
 }

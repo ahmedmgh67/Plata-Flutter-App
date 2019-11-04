@@ -3,6 +3,7 @@ import 'package:contact_picker/contact_picker.dart';
 import '../utils/success_error_overlay.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class SendMoneyPage extends StatefulWidget {
   @override
@@ -16,12 +17,14 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   final key = new GlobalKey<ScaffoldState>();
   var showed = false;
   var amount;
+  var phone;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
       appBar: AppBar(),
       body: Stack(
+        fit: StackFit.expand,
         children: <Widget>[
           ListView(
             children: <Widget>[
@@ -47,7 +50,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
                       },
                     ),
                   ),
-                  onChanged: (s) => amount = s,
+                  onChanged: (s) => phone = s,
                   keyboardType: TextInputType.phone,
                   controller: cont,
                 ),
@@ -95,15 +98,53 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   }
 
   void submit() async {
-    if (amount == null || cont.text == null || cont.text.length != 11) {
-      key.currentState.showSnackBar(SnackBar(content: Text("Enter correct info")));
+    if (amount == null || cont.text == null) {
+      key.currentState
+          .showSnackBar(SnackBar(content: Text("Enter correct info")));
+      return;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var phone = prefs.getString("phone");
-      await http.get("https://plataapi.tk/api/qrcode/$phone/${acontact.phoneNumber.number.toString()}/$amount");
-      setState(() {
-        showed = true;
-      });
+      var token = prefs.getString("token");
+      var userId = prefs.getString("userId");
+      var req = await http.get(
+        "https://plataapi.tk/api/v1/users/phone/${cont.text}",
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+      );
+      var deco = jsonDecode(req.body);
+      print(deco);
+      if (deco.length == 0) {
+        key.currentState.showSnackBar(SnackBar(
+          content: Text("Account not Available"),
+        ));
+        return;
+      } else {
+        print("availabel!!!!!");
+        var reId = deco[0]["_id"];
+        var eq = await http.post("https://plataapi.tk/api/v1/transactions",
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json'
+            },
+            body: jsonEncode(
+                {"fromUser": userId, "toUser": reId, "amount": amount}));
+        var decoa = jsonDecode(eq.body);
+        print(decoa);
+        if (decoa["message"] == "amount is less than balance" ||
+            decoa["mesaage"] == "missingData") {
+          key.currentState.showSnackBar(SnackBar(
+            content: Text("Balance not available"),
+          ));
+        } else {
+          setState(() {
+            showed = true;
+          });
+        }
+      }
     }
   }
 }

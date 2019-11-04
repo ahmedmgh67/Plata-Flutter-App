@@ -6,11 +6,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   
-  runApp(MyApp(prefs.getString("phone")));
+  runApp(MyApp(prefs.getBool("logged")));
 }
 
 class MyApp extends StatefulWidget {
-  final String phone;
+  final  phone;
   MyApp(this.phone);
 
   @override

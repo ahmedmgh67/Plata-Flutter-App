@@ -19,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: key,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -51,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                   margin: EdgeInsets.only(bottom: 9.0),
                   child: TextField(
                       decoration: InputDecoration(
-                        labelText: "Phone",
+                        labelText: "E-mail",
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (s) => phone = s),
@@ -72,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                   color: Colors.deepPurple,
-                  onPressed: () => login(),
+                  onPressed: () => login(phone, password),
                 ),
               ],
             ),
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     if (isCorrect) {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => DashboardPage(phone)));
+                          builder: (_) => DashboardPage()));
                     } else {
                       setState(() => showed = false);
                     }
@@ -95,43 +96,80 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  dynamic login() async {
-    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
+  // dynamic login() async {
+  //   key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
+  //   try {
+  //     var req = await http.post(
+  //       "https://plataapi.tk/api/login",
+  //       body: {
+  //         "phone": phone,
+  //         "password": password,
+  //       },
+  //     );
+  //     var decoded = jsonDecode(req.body);
+  //     if (decoded["phone"] != phone && decoded["password"] != password) {
+  //       isCorrect = false;
+  //       //html.window.alert("error IN MATCHINg");
+  //       setState(() {
+  //         showed = true;
+  //       });
+  //       return 1;
+  //     } else {
+  //       isCorrect = true;
+  //       setState(() {
+  //         showed = true;
+  //       });
+  //       var prefs = await SharedPreferences.getInstance();
+  //       // prefs.setString("email", email);
+  //       prefs.setString("phone", phone);
+  //       await Navigator.of(context).pushReplacement(
+  //           MaterialPageRoute(builder: (_) => DashboardPage(phone)));
+  //       return 0;
+  //     }
+  //   } catch (err) {
+  //     isCorrect = false;
+  //     //html.window.alert("error in res");
+  //     setState(() {
+  //       showed = true;
+  //     });
+  //     return 1;
+  //   }
+  // }
+  void login(emaila, passworda) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    // print(email + password);
+    var req = await http.post(
+      "https://plataapi.tk/api/v1/users/auth",
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        "password": passworda.toString().trim(),
+        "email": emaila.toString().trim(),
+      }),
+    );
+    Map<String, dynamic> decodedJSON;
+    var decodeSucceeded = false;
+    print(req.body);
     try {
-      var req = await http.post(
-        "https://plataapi.tk/api/login",
-        body: {
-          "phone": phone,
-          "password": password,
-        },
+      json.decode(req.body) as Map<String, dynamic>;
+      decodeSucceeded = true;
+      final snackBar = SnackBar(
+        content: Text('Not correct info. Please Try Again'),
       );
-      var decoded = jsonDecode(req.body);
-      if (decoded["phone"] != phone && decoded["password"] != password) {
-        isCorrect = false;
-        //html.window.alert("error IN MATCHINg");
-        setState(() {
-          showed = true;
-        });
-        return 1;
-      } else {
-        isCorrect = true;
-        setState(() {
-          showed = true;
-        });
-        var prefs = await SharedPreferences.getInstance();
-        // prefs.setString("email", email);
-        prefs.setString("phone", phone);
-        await Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => DashboardPage(phone)));
-        return 0;
-      }
-    } catch (err) {
-      isCorrect = false;
-      //html.window.alert("error in res");
-      setState(() {
-        showed = true;
-      });
-      return 1;
+      key.currentState.showSnackBar(snackBar);
+    } catch (e) {
+      var token = req.body.split("::");
+      print(token[0]);
+      print(token[1]);
+      preferences.setBool("logged", true);
+      preferences.setString("token", token[0].replaceAll('"', ''));
+      preferences.setString("userId", token[1]);
+      //preferences.setString("name", req.body);
+      print("success");
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => DashboardPage()));
     }
   }
 }

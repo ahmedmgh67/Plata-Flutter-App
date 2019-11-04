@@ -11,8 +11,8 @@ import './qrPage.dart';
 import './sendMoneyPage.dart';
 
 class DashboardPage extends StatefulWidget {
-  final String phone;
-  DashboardPage(this.phone);
+  // final String phone;
+  // DashboardPage(this.phone);
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -29,6 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   var balance;
   var name;
+  var email;
   int trn;
   var transactionjson;
   Widget smallScreen() {
@@ -43,6 +44,12 @@ class _DashboardPageState extends State<DashboardPage> {
               color: Colors.white, fontWeight: FontWeight.w400, fontSize: 30.0),
         ),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => network(),
+          ),
+        ],
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () => Navigator.of(context)
@@ -61,7 +68,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: ListView(
                   children: <Widget>[
                     UserAccountsDrawerHeader(
-                      accountEmail: Text(widget.phone),
+                      accountEmail: Text(email),
                       accountName: Text(name),
                       decoration: BoxDecoration(color: Colors.deepPurple),
                       currentAccountPicture: CircleAvatar(
@@ -75,12 +82,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
                                 builder: (_) =>
-                                    TransactionPage(transactionjson)))),
-                    ListTile(
-                        title: Text("Withdraw"),
-                        onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (_) => WithdrawPage(balance)))),
+                                    TransactionPage()))),
+                    // ListTile(
+                    //     title: Text("Withdraw"),
+                    //     onTap: () => Navigator.of(context).push(
+                    //         MaterialPageRoute(
+                    //             builder: (_) => WithdrawPage(balance)))),
                     Divider(),
                     ListTile(
                         title: Text("Settings"),
@@ -143,7 +150,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text('transaction Made',
+                              Text('Transaction Made',
                                   style: TextStyle(color: Colors.blueAccent)),
                               Text(trn.toString(),
                                   style: TextStyle(
@@ -177,7 +184,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             children: <Widget>[
                               Text('Balance',
                                   style: TextStyle(color: Colors.blueAccent)),
-                              Text(balance,
+                              Text(balance.toString(),
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700,
@@ -212,7 +219,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       color: Colors.white, size: 30.0),
                                 )),
                             Padding(padding: EdgeInsets.only(bottom: 16.0)),
-                            Text('transaction',
+                            Text('History',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700,
@@ -224,7 +231,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                TransactionPage(transactionjson),
+                                TransactionPage(),
                           ),
                         )),
                 // _buildTile(
@@ -318,7 +325,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => QRPage("p::" + widget.phone),
+                      builder: (context) => QRPage(),
                     ),
                   ),
                 ),
@@ -408,23 +415,44 @@ class _DashboardPageState extends State<DashboardPage> {
         stickyAuth: true,
       );
       if (authed) {
-      } else {}
+        network();
+      } else {
+
+      }
     }
-    var req = await http.get(
-      "https://plataapi.tk/api/transactions/${widget.phone}",
-    );
-    var decoded = jsonDecode(req.body);
-    transactionjson = decoded;
-    print(decoded);
-    trn = decoded.length;
+    
+  }
+  void network() async {
+    if(loaded){
+      setState(() {
+        loaded = false;
+      });
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userId = prefs.getString("userId").replaceAll('"', '');
+    var token = prefs.getString("token").replaceAll('"', '');    
+    // var req = await http.get(
+    //   "https://plataapi.tk/api/v1/transactions/view",
+    //   headers: {
+    //     "Authorization":"Bearer $token"
+    //   }
+    // );
+    // var decoded = jsonDecode(req.body);
+    // transactionjson = decoded;
+    // print(decoded);
     var req2 = await http.get(
-      "https://plataapi.tk/api/account/${widget.phone}",
+      "https://plataapi.tk/api/v1/users/$userId",
+      headers: {
+        "Authorization":"Bearer $token"
+      }
     );
     var decoded2 = jsonDecode(req2.body);
-    prefs.setString("userId", decoded2["_id"]);
-    prefs.setString("userAm", decoded2["balance"]);
+    trn = decoded2["transactions"].length;
+    // prefs.setString("userId", decoded2["_id"]);
+    // prefs.setString("userAm", decoded2["balance"]);
     balance = decoded2["balance"];
-    name = decoded2["name"];
+    name = decoded2["username"];
+    email = decoded2["email"];
     print(decoded2);
     setState(() {
       loaded = true;

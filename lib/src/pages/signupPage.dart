@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import '../utils/success_error_overlay.dart';
 import './dashboardPage.dart';
+import 'dart:convert';
+import 'dart:async';
 
 class GetStartedPage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class GetStartedPage extends StatefulWidget {
 class _GetStartedPageState extends State<GetStartedPage> {
   String name;
   String phone;
+  String email;
   String password;
   bool showed = false;
   bool isCorrect;
@@ -18,6 +21,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key:key,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -55,15 +59,15 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       ),
                       onChanged: (s) => name = s),
                 ),
-                // Container(
-                //   margin: EdgeInsets.only(bottom: 9.0),
-                //   child: TextField(
-                //       decoration: InputDecoration(
-                //         labelText: "E-Mail",
-                //         border: OutlineInputBorder(),
-                //       ),
-                //       onChanged: (s) => email = s),
-                // ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 9.0),
+                  child: TextField(
+                      decoration: InputDecoration(
+                        labelText: "E-Mail",
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (s) => email = s),
+                ),
                 Container(
                   margin: EdgeInsets.only(bottom: 9.0),
                   child: TextField(
@@ -89,7 +93,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                   color: Colors.deepPurple,
-                  onPressed: () => signup("a"),
+                  onPressed: () => register(phone, email, password, name),
                 ),
               ],
             ),
@@ -111,36 +115,63 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-  Future<int> signup(a) async {
-    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
+  // Future<int> signup(a) async {
+  //   key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
 
-    try {
-      await post(
-        "https://plata-eg.ml/api/register",
-        body: {
-          // "email": email,
-          "password": password,
-          "name": name,
-          "phone": phone
-        },
+  //   try {
+  //     await post(
+  //       "https://plata-eg.ml/api/register",
+  //       body: {
+  //         // "email": email,
+  //         "password": password,
+  //         "name": name,
+  //         "phone": phone
+  //       },
+  //     );
+  //     // var decoded = jsonDecode(req.body);
+  //     //print(decoded);
+  //   } catch (err) {
+  //     print(err);
+  //     isCorrect = false;
+  //     setState(() {
+  //       showed = true;
+  //     });
+  //     return 1;
+  //   }
+  //   key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
+  //   isCorrect = true;
+  //   setState(() {
+  //     showed = true;
+  //   });
+
+  //   return 0;
+  // }
+  void register(phonea, emaila, passworda, namea) async {
+    print(phone);
+    var req = await http.post(
+      "https://plataapi.tk/api/v1/users/register",
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        "phone": phonea,
+        "email": emaila.toString().trim(),
+        "password": passworda.toString().trim(),
+        "username": namea,
+        "passwordConfirmation": passworda.toString().trim(),
+      }),
+    );
+    print(req.body);
+    if (req.body == '{"registered":true}') {
+      final snackBar = SnackBar(
+        content: Text('Registered Successfully. Now Login.'),
       );
-      // var decoded = jsonDecode(req.body);
-      //print(decoded);
-    } catch (err) {
-      print(err);
-      isCorrect = false;
-      setState(() {
-        showed = true;
+      key.currentState.showSnackBar(snackBar);
+      Timer(Duration(seconds: 1), () {
+        Navigator.pop(context);
       });
-      return 1;
     }
-    key.currentState.showSnackBar(SnackBar(content: Text("Loading...")));
-    isCorrect = true;
-    setState(() {
-      showed = true;
-    });
-
-    return 0;
   }
 }
 

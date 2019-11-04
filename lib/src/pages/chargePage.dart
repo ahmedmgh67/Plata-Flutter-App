@@ -59,9 +59,9 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
                       ],
                     ),
                   ),
-                  SuccessErrorOverlay(
+                  !showed?Container():SuccessErrorOverlay(
                     isCorrect: isCorrect,
-                    onTap: (){
+                    onTap: () {
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);
@@ -74,6 +74,7 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
   }
 
   void request() async {
+    print(widget.phonesc);
     var phone = widget.phonesc;
     var substringList = phone.split("::");
     if (substringList[0] == "b") {
@@ -85,7 +86,8 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
               actions: <Widget>[
                 FlatButton(
                   child: Text("Confirm"),
-                  onPressed: () => confirmBusinessPayment(billAmount, substringList[1]),
+                  onPressed: () =>
+                      confirmBusinessPayment(billAmount, substringList[1]),
                 ),
                 FlatButton(
                   child: Text("Cancel"),
@@ -101,8 +103,13 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
             );
           });
     } else {
-      print(phone + "this should be phone");
-      var req = await http.get("https://plata-eg.ml/api/account/" + phone);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      // print(phone + "this should be phone");
+      var req = await http.get(
+        "https://plata-eg.ml/api/v1/users/" + substringList[1],
+        headers: {"Authorization": "Bearer $token"},
+      );
       var decoded = jsonDecode(req.body);
       if (decoded != null) {
         id = decoded["_id"];
@@ -110,6 +117,7 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
         setState(() {
           loaded = true;
         });
+        //submit();
       } else {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (_) => ErrorPage()));
@@ -119,8 +127,20 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
 
   void confirmBusinessPayment(bill, phone) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var myPhone  = prefs.getString("phone");
-    var req = await http.get("https://plataapi.tk/api/qrcode/$myPhone/$phone/$bill");
+    var substringList = phone.split("::");
+    String token = prefs.getString("token");
+    String userId = prefs.getString("userId");
+    var req = await http.post("https://plataapi.tk/api/v1/transactions/",
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({
+          "amount": amount,
+          "fromUser": userId,
+          "toUser": substringList[1]
+        }));
     var decoded = jsonDecode(req.body);
     if (decoded["message"] == "amount is less than balance") {
       isCorrect = false;
@@ -134,13 +154,24 @@ class _ChargeOnePageState extends State<ChargeOnePage> {
       });
     }
   }
+
   void submit() async {
     var phone = widget.phonesc;
     var substringList = phone.split("::");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String myphone = prefs.getString("phone");
-    var req = await http.get(
-        "https://plata-eg.ml/api/qrcode/$myphone/${substringList[1]}/$amount");
+    String token = prefs.getString("token");
+    String userId = prefs.getString("userId");
+    var req = await http.post("https://plataapi.tk/api/v1/transactions/",
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({
+          "amount": amount,
+          "fromUser": userId,
+          "toUser": substringList[1]
+        }));
     var decoded = jsonDecode(req.body);
     if (decoded["message"] == "amount is less than balance") {
       isCorrect = false;

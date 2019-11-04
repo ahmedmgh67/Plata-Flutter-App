@@ -6,8 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './chargePage.dart';
 
 class QRPage extends StatefulWidget {
-  final String phone;
-  QRPage(this.phone);
   @override
   _QRPageState createState() => _QRPageState();
 }
@@ -16,6 +14,7 @@ class _QRPageState extends State<QRPage> {
   SharedPreferences prefs;
 
   bool loaded = false;
+  String data;
   @override
   initState() {
     super.initState();
@@ -23,6 +22,7 @@ class _QRPageState extends State<QRPage> {
   }
   void init() async {
     prefs = await SharedPreferences.getInstance();
+    data = "p::"+ prefs.getString("userId");
     setState(() {
       loaded = true;
     });
@@ -38,10 +38,10 @@ class _QRPageState extends State<QRPage> {
         child: Icon(Icons.camera),
       ),
       body: Center(
-        child: Container(
+        child: loaded==false?CircularProgressIndicator():Container(
           width: MediaQuery.of(context).size.width,
           child: QrImage(
-            data: widget.phone//prefs.getString("phone"),
+            data: data//prefs.getString("phone"),
           ),
         ),
       ),
