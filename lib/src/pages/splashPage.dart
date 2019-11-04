@@ -5,8 +5,8 @@ import 'dashboardPage.dart';
 import './landingPage.dart';
 
 class SplashPage extends StatefulWidget {
-  final user ;
-  SplashPage(this.user);
+  final logged ;
+  SplashPage(this.logged);
   @override
   _SplashPageState createState() => _SplashPageState();
 }
@@ -32,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
       backgroundColor: Colors.white,
       image: Image.asset("media/typoper.png"),
       seconds: 3,
-      navigateAfterSeconds: widget.user != null || widget.user !=false ? DashboardPage() : LandingPage(),
+      navigateAfterSeconds: widget.logged ? DashboardPage() : LandingPage(),
       loaderColor: Colors.deepPurple,
     );
   }

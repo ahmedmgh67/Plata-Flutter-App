@@ -5,13 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  
-  runApp(MyApp(prefs.getBool("logged")));
+  var logged = prefs.getBool("logged");
+  if (logged == null) {
+    logged = false;
+  }
+  runApp(MyApp(logged));
 }
 
 class MyApp extends StatefulWidget {
-  final  phone;
-  MyApp(this.phone);
+  final  logged;
+  MyApp(this.logged);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -27,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: SplashPage(widget.phone),
+      home: SplashPage(widget.logged),
     );
   }
 }

@@ -47,7 +47,7 @@ class _DashboardPageState extends State<DashboardPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: () => network(),
+            onPressed: loaded? () => network():null,
           ),
         ],
       ),
@@ -417,8 +417,19 @@ class _DashboardPageState extends State<DashboardPage> {
       if (authed) {
         network();
       } else {
-
+        showDialog(
+          context: context,
+          builder: (context){
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Authentication Failed"),
+            );
+          }
+        );
       }
+    } else{
+      network();
+
     }
     
   }
